@@ -151,6 +151,8 @@ void webBaseFunction(char command){
     Serial.println("Start NH3 Ultrasonic");
     if(levelCheck(bioChipTrigPin,bioChipEchoPin)){
       //To Do : Serial Communication
+      lcd.setCursor(0, 0);
+      lcd.print("Enter bioChip");
       for(int i=0;i<15;i++){
         buzzer(1000);
         digitalWrite(bioChipLedPin, HIGH);
@@ -166,6 +168,8 @@ void webBaseFunction(char command){
     Serial.println("Start Low PH Ultrasonic");
     if(levelCheck(slakelimeTrigPin,slakelimeEchoPin)){
       //To Do : Serial Communication
+      lcd.setCursor(0, 0);
+      lcd.print("Enter slakelime");
       for(int i=0;i<15;i++){
         buzzer(1000);
         digitalWrite(slakelimeLedPin, HIGH);
@@ -181,6 +185,8 @@ void webBaseFunction(char command){
     Serial.println("Start High PH Ultrasonic");
     if(levelCheck(sugarTrigPin,sugarEchoPin)){
       //To Do : Serial Communication
+      lcd.setCursor(0, 0);
+      lcd.print("Enter sugar");
       for(int i=0;i<15;i++){
         buzzer(1000);
         digitalWrite(sugarLedPin, HIGH);
