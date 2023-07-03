@@ -1,0 +1,154 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <Keypad.h>
+
+
+//Nema17 Function
+void Nema17Driver(int dirPin,int stepPin,int grams){
+  int stepsPerRevolution = 200;
+  int actualStepToGo = ((stepsPerRevolution/360)* grams);
+
+  // Set motor direction clockwise
+	digitalWrite(dirPin, HIGH); // Change LOW or HIGh to change rotation
+
+	// Spin motor slowly
+	for(int x = 0; x < actualStepToGo; x++)
+	{
+		digitalWrite(stepPin, HIGH);
+		delayMicroseconds(2000);
+		digitalWrite(stepPin, LOW);
+		delayMicroseconds(2000);
+	}
+
+}
+
+
+// display initialization
+LiquidCrystal_I2C lcd(0x3F, 16, 2);
+
+//keypad intialization
+const byte ROWS = 4; //four rows
+const byte COLS = 4; //four columns
+
+char keys[ROWS][COLS] = {
+  {'1','2','3','A'},
+  {'4','5','6','B'},
+  {'7','8','9','C'},
+  {'*','0','#','D'}
+};
+
+byte rowPins[ROWS] = {41, 39, 37, 35}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {33, 31, 29, 27}; //connect to the column pinouts of the keypad
+
+// //Create an object of keypad
+// Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+
+
+// //Keypad Function
+// String inputString;
+// float inputInt;
+
+// float Keypad() {
+//   char key = keypad.getKey();
+
+//   if (key) {
+//     //Serial.print(key);
+
+//     if (key >= '0' && key <= '9') {  // only act on numeric keys
+//       inputString += key;            // append new character to input string
+//     } else if (key == 'D') {
+//       inputString.concat('.');
+//     } else if (key == '#') {
+//       if (inputString.length() > 0) {
+//         inputInt = inputString.toFloat();  // YOU GOT AN INTEGER NUMBER
+//         inputString = "";                  // clear input
+//         // DO YOUR WORK HERE
+//         inputInt = inputInt;
+//         Serial.print(inputInt);
+//         Serial.print("\n");
+//         return inputInt;
+//       }
+//     } else if (key == '*') {
+
+//       inputString = "";  // clear input
+//     }
+
+//     // append new character to input string
+//   }
+//   return 0;
+// }
+
+void webBaseFunction(char command){
+  Serial.println("Web Based");
+  Serial.println(command);
+  if(command == '1'){
+    // TODO: Treatment functions
+    Serial.println("Start Low PH threatment");
+  }else if(command == '2'){
+    // TODO: Treatment functions
+    Serial.println("Start High PH threatment");
+  }else if(command == '3'){
+    // TODO: Treatment functions
+    Serial.println("Start NH3 threatment");
+  }else if(command == '4'){
+    // TODO: Treatment functions
+    Serial.println("Start NH3 Ultrasonic");
+  }else if(command == '5'){
+    // TODO: Treatment functions
+    Serial.println("Start Low PH Ultrasonic");
+  }else if(command == '6'){
+    // TODO: Treatment functions
+    Serial.println("Start High PH Ultrasonic");
+  }else{
+    Serial.println("No threatment");
+  }
+}
+
+void keypadBaseFunction(){
+  Serial.println("Keypad Based");
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Welcome");
+  delay(2000);
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("1.Water I/O");
+  lcd.setCursor(4, 1);
+  lcd.print("System");
+  delay(5000);
+  lcd.clear();
+}
+
+
+void setup(){
+  Serial.begin(9600);
+  Serial1.begin(9600);
+  lcd.begin();
+  lcd.backlight();
+  lcd.clear();
+
+  //pin declare 
+  pinMode(A0, OUTPUT); // Nema 1 DirPin 
+  pinMode(A1, OUTPUT); // Nema 1 stepPin 
+  pinMode(A2, OUTPUT); // Nema 2 Dir Pin 
+  pinMode(A3, OUTPUT); // Nema 2 stepPin 
+  pinMode(A4, OUTPUT); // Nema 3 DIR Pin 
+  pinMode(A5, OUTPUT); // Nema 3 stepPin 
+  pinMode(43, OUTPUT); // Small tank solinoid valve
+  pinMode(45, OUTPUT); // water pump to small tank solinoid valve
+
+  digitalWrite(43, HIGH); //Trun off relay channel
+  digitalWrite(45, HIGH); //Trun off relay channel
+
+
+}
+  
+void loop(){
+  if(Serial1.available()){
+    char command = Serial1.read();
+    
+    webBaseFunction(command);
+  }else{
+    keypadBaseFunction();
+  }
+}
