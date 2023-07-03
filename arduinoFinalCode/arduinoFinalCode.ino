@@ -2,6 +2,33 @@
 #include <LiquidCrystal_I2C.h>
 #include <Keypad.h>
 
+//Pin Initialization
+
+//Untrasonic Pin Initialization
+int sugarTrigPin = 8;
+int sugarEchoPin = 9;
+
+int bioChipTrigPin = 10;
+int bioChipEchoPin = 11;
+
+int slakelimeTrigPin = 12;
+int slakelimeEchoPin = 13;
+
+//Buzzer Pin initialization
+int tonePin = 7;
+
+//LED Pin initialization
+int sugarLedPin = 4;
+int bioChipLedPin = 3;
+int slakelimeLedPin = 2;
+
+
+//Buzzer Function
+void buzzer(int delayVal) {
+  tone(tonePin, 500, 700);
+  delay(delayVal);
+}
+
 
 //Nema17 Function Need to check
 void Nema17Driver(int dirPin,int stepPin,int grams){
@@ -20,6 +47,35 @@ void Nema17Driver(int dirPin,int stepPin,int grams){
 		delayMicroseconds(2000);
 	}
 
+}
+
+//Ultrasonic sensors levels checking
+bool isCanisterEmpty(int dis){
+  int canisterEndPoint = 10; // need to check
+  if(dis > canisterEndPoint){
+    return true;
+  }else{
+    return false;
+  }
+}
+
+bool levelCheck(int trigPin, int echoPin) {
+  int distance;
+  long duration;
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(50);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(50);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  Serial.println(distance);
+
+  bool status = isCanisterEmpty(distance);
+
+  return status;
 }
 
 
@@ -93,12 +149,48 @@ void webBaseFunction(char command){
   }else if(command == '4'){
     // TODO: Treatment functions
     Serial.println("Start NH3 Ultrasonic");
+    if(levelCheck(bioChipTrigPin,bioChipEchoPin)){
+      //To Do : Serial Communication
+      for(int i=0;i<15;i++){
+        buzzer(1000);
+        digitalWrite(bioChipLedPin, HIGH);
+        delay(1000);
+        digitalWrite(bioChipLedPin, LOW);
+        delay(1000);
+      }
+    }else{
+      //To Do : Serial Communication
+    }
   }else if(command == '5'){
     // TODO: Treatment functions
     Serial.println("Start Low PH Ultrasonic");
+    if(levelCheck(slakelimeTrigPin,slakelimeEchoPin)){
+      //To Do : Serial Communication
+      for(int i=0;i<15;i++){
+        buzzer(1000);
+        digitalWrite(slakelimeLedPin, HIGH);
+        delay(1000);
+        digitalWrite(slakelimeLedPin, LOW);
+        delay(1000);
+      }
+    }else{
+      //To Do : Serial Communication
+    }
   }else if(command == '6'){
     // TODO: Treatment functions
     Serial.println("Start High PH Ultrasonic");
+    if(levelCheck(sugarTrigPin,sugarEchoPin)){
+      //To Do : Serial Communication
+      for(int i=0;i<15;i++){
+        buzzer(1000);
+        digitalWrite(sugarLedPin, HIGH);
+        delay(1000);
+        digitalWrite(sugarLedPin, LOW);
+        delay(1000);
+      }
+    }else{
+      //To Do : Serial Communication
+    }
   }else{
     Serial.println("No threatment");
   }
